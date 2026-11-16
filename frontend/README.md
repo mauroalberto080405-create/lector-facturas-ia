@@ -1,59 +1,45 @@
-# Frontend
+# Frontend — Lector de facturas con IA
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.43.
+Interfaz web en **Angular 20** para la API del proyecto (ver el [README principal](../README.md)).
 
-## Development server
+## Pantallas
 
-To start a local development server, run:
+- **Subir PDF** (`/subir`): arrastrar o elegir una factura; muestra si quedó `VALIDA` u `OBSERVADA`,
+  sus observaciones, ítems y totales.
+- **Facturas** (`/facturas`): listado con filtros por RUC, estado y fechas; detalle al hacer clic.
+- **Resumen** (`/resumen`): totales de las facturas válidas por moneda, mes y proveedor.
 
-```bash
-ng serve
+## Estructura
+
+```
+src/app/
+├── facturas/
+│   ├── factura.model.ts        # interfaces que reflejan los esquemas de la API
+│   ├── facturas.service.ts     # única puerta a la API (HttpClient)
+│   └── factura-detalle/        # componente presentacional reutilizable
+└── paginas/
+    ├── subir/                  # carga del PDF
+    ├── listado/                # tabla + filtros (formulario reactivo)
+    └── resumen/                # tarjetas, tablas y barras (computed)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Componentes standalone, signals, control de flujo `@if`/`@for` y rutas con carga diferida.
+La URL de la API está en `src/environments/`.
 
-## Code scaffolding
+## Ejecutar
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Con la API corriendo en `http://localhost:8000`:
 
 ```bash
-ng generate --help
+npm install
+npx ng serve -o          # http://localhost:4200
 ```
 
-## Building
-
-To build the project run:
+## Tests
 
 ```bash
-ng build
+npm test                 # Karma + Jasmine, con Chrome
+npm run test:ci          # sin ventana (lo usa GitHub Actions)
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Los tests simulan la API con `HttpTestingController`; no necesitan el backend.

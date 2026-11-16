@@ -1,0 +1,5 @@
+# Archivos de texto: Git normaliza los saltos de línea
+* text=auto
+
+# Los PDF son binarios: nunca tocar sus bytes
+*.pdf binary

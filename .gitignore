@@ -1,0 +1,14 @@
+# Entorno virtual
+.venv/
+
+# Secretos: nunca se suben
+.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editor / sistema
+.vscode/
+.DS_Store

@@ -1,0 +1,36 @@
+:host { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; max-width: 760px; }
+h2 { margin: 0; }
+.ayuda { margin: 0; color: var(--texto-suave); }
+
+.zona {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  padding: 2.5rem 1rem;
+  border: 2px dashed var(--borde);
+  border-radius: 10px;
+  background: var(--superficie);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+.zona:hover, .zona.encima { border-color: var(--acento); background: var(--acento-fondo); }
+.zona input { display: none; }
+.zona span { color: var(--texto-suave); font-size: 0.9rem; }
+
+button {
+  justify-self: start;
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--acento);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.error, .exito { margin: 0; padding: 0.7rem 1rem; border-radius: 8px; }
+.error { background: var(--error-fondo); color: var(--error); }
+.exito { background: var(--ok-fondo); color: var(--ok); }

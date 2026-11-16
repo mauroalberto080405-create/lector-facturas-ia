@@ -6,7 +6,10 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from app.config import config
 
 # El engine administra el pool de conexiones; se crea una vez para toda la app.
-engine = create_engine(config.database_url)
+# pool_pre_ping: antes de usar una conexión del pool comprueba que siga viva.
+# Las bases en la nube (Neon) cierran conexiones inactivas; sin esto, la primera
+# petición después de un rato fallaría.
+engine = create_engine(config.database_url, pool_pre_ping=True)
 SesionLocal = sessionmaker(bind=engine)
 
 

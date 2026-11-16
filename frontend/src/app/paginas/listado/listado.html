@@ -1,0 +1,81 @@
+<h2>Facturas</h2>
+
+<form class="filtros" [formGroup]="filtros" (ngSubmit)="buscar()">
+  <label>
+    RUC emisor
+    <input formControlName="ruc" inputmode="numeric" maxlength="11" placeholder="20601234565" />
+  </label>
+  <label>
+    Estado
+    <select formControlName="estado">
+      <option value="">Todos</option>
+      <option value="VALIDA">Válida</option>
+      <option value="OBSERVADA">Observada</option>
+    </select>
+  </label>
+  <label>
+    Desde
+    <input type="date" formControlName="desde" />
+  </label>
+  <label>
+    Hasta
+    <input type="date" formControlName="hasta" />
+  </label>
+  <div class="acciones">
+    <button type="submit" [disabled]="cargando()">Buscar</button>
+    <button type="button" class="secundario" (click)="limpiar()">Limpiar</button>
+  </div>
+</form>
+
+@if (error(); as mensaje) {
+  <p class="error" role="alert">{{ mensaje }}</p>
+}
+
+@if (cargando()) {
+  <p class="suave" role="status">Cargando…</p>
+} @else if (!error()) {
+  <p class="suave">{{ facturas().length }} factura(s). Haz clic en una fila para ver el detalle.</p>
+
+  <div class="tabla">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Serie-número</th>
+          <th>Emisor</th>
+          <th class="num">Total</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (f of facturas(); track f.id) {
+          <tr
+            tabindex="0"
+            [class.activa]="seleccionada()?.id === f.id"
+            (click)="alternar(f)"
+            (keydown.enter)="alternar(f)"
+          >
+            <td>{{ f.fecha_emision }}</td>
+            <td>{{ f.serie_numero }}</td>
+            <td>
+              {{ f.razon_social }}
+              <span class="suave ruc">{{ f.ruc_emisor }}</span>
+            </td>
+            <td class="num">{{ simbolo(f.moneda) }} {{ f.total | number: '1.2-2' }}</td>
+            <td>
+              <span class="insignia" [class.valida]="f.estado === 'VALIDA'" [class.observada]="f.estado === 'OBSERVADA'">
+                {{ f.estado }}
+              </span>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="vacio">No hay facturas con esos filtros.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (seleccionada(); as f) {
+  <app-factura-detalle [factura]="f" />
+}

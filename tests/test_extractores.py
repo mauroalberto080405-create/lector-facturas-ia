@@ -86,6 +86,17 @@ def test_fabrica_elige_openai_si_hay_api_key():
     assert isinstance(crear_extractor(config), OpenAIExtractor)
 
 
+def test_fabrica_usa_api_compatible_si_hay_base_url():
+    config = Config(
+        _env_file=None,
+        ia_proveedor="openai",
+        openai_api_key="gsk-falsa",
+        openai_base_url="https://api.groq.com/openai/v1",
+    )
+    extractor = crear_extractor(config)
+    assert str(extractor.cliente.base_url).startswith("https://api.groq.com/openai/v1")
+
+
 def test_fabrica_openai_sin_api_key_falla_con_mensaje_claro():
     with pytest.raises(ValueError, match="OPENAI_API_KEY"):
         crear_extractor(Config(_env_file=None, ia_proveedor="openai"))

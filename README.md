@@ -2,8 +2,13 @@
 
 ![tests](../../actions/workflows/tests.yml/badge.svg)
 
-API que recibe **facturas electrónicas peruanas en PDF**, extrae sus datos con un modelo de IA,
-los **valida con reglas contables de SUNAT** y los guarda en PostgreSQL para consultarlos y resumirlos.
+Aplicación full stack que recibe **facturas electrónicas peruanas en PDF**, extrae sus datos con un
+modelo de IA, los **valida con reglas contables de SUNAT** y los guarda en PostgreSQL para consultarlos
+y resumirlos. Backend en **FastAPI** y frontend en **Angular**.
+
+| Subir PDF | Facturas | Resumen |
+|---|---|---|
+| ![Subir PDF](docs/capturas/subir.png) | ![Facturas](docs/capturas/facturas.png) | ![Resumen](docs/capturas/resumen.png) |
 
 > Todas las facturas del repositorio son **ficticias** (RUC y empresas inventadas), generadas con
 > `scripts/generar_facturas.py`.
@@ -19,6 +24,7 @@ no cuadra, queda marcada como `OBSERVADA` con la lista de errores para revisión
 
 ```mermaid
 flowchart LR
+    U[Angular] -->|POST /facturas| A
     A[PDF] -->|pdfplumber| B[Texto]
     B -->|Ollama u OpenAI| C[JSON]
     C -->|Pydantic| D[FacturaExtraida]
@@ -78,6 +84,26 @@ curl -F "archivo=@facturas_ejemplo/factura_03_igv_incorrecto.pdf" http://127.0.0
 }
 ```
 
+## Interfaz web (Angular)
+
+Carpeta `frontend/`, Angular 20 con componentes standalone y signals:
+
+- **Subir PDF**: arrastrar o elegir un PDF; muestra el resultado (`VALIDA`/`OBSERVADA`), las
+  observaciones de validación, los ítems y los totales. Los errores de la API (`409` duplicada,
+  `400` PDF sin texto, `502` IA no disponible) se muestran con el mensaje que envía FastAPI.
+- **Facturas**: tabla con filtros por RUC, estado y rango de fechas (se filtra en la API, no en el
+  navegador) y detalle al hacer clic en una fila.
+- **Resumen**: totales por moneda, por mes y por proveedor, con barras proporcionales.
+
+Detalles de implementación:
+
+- Un único `FacturasService` habla con la API; los componentes nunca arman URLs.
+- Interfaces TypeScript que reflejan los esquemas Pydantic. Los montos llegan como `string`
+  (la API usa `Decimal`) para no perder céntimos con los decimales de JavaScript.
+- `FacturaDetalle` es un componente presentacional (`input()`) reutilizado en dos pantallas.
+- Rutas con carga diferida (`loadComponent`).
+- La API solo acepta peticiones del navegador desde los orígenes de `CORS_ORIGENES`.
+
 ## Cómo ejecutarlo
 
 Requisitos: **Docker** y **[Ollama](https://ollama.com)** con el modelo `qwen2.5:3b`.
@@ -88,6 +114,17 @@ docker compose up --build
 ```
 
 Abrir `http://127.0.0.1:8000/docs`. Los PDFs de prueba están en `facturas_ejemplo/`.
+
+Frontend (requiere Node 22 o superior), en otra terminal:
+
+```bash
+cd frontend
+npm install
+npx ng serve -o        # http://localhost:4200
+```
+
+> En carpetas sincronizadas (OneDrive) puede que Angular no detecte los cambios; usar
+> `npx ng serve -o --poll 2000`.
 
 Para usar OpenAI en vez de Ollama, copiar `.env.example` a `.env` y definir
 `IA_PROVEEDOR=openai` y `OPENAI_API_KEY`. El `.env` está en `.gitignore`.
@@ -105,12 +142,13 @@ uvicorn app.main:app --reload
 ### Tests
 
 ```bash
-pytest -v
+pytest -v                      # backend
+cd frontend && npm test        # frontend (Karma + Jasmine)
 ```
 
 Los tests **no necesitan IA ni PostgreSQL**: usan un extractor falso (`ExtractorFalso`) inyectado con
-`dependency_overrides` de FastAPI y SQLite en memoria. GitHub Actions los corre en cada push y además
-construye la imagen Docker.
+`dependency_overrides` de FastAPI y SQLite en memoria. Los del frontend simulan la API con
+`HttpTestingController`. GitHub Actions corre ambos en cada push, compila Angular y construye la imagen Docker.
 
 ## Decisiones técnicas
 
@@ -132,9 +170,14 @@ construye la imagen Docker.
   (por ejemplo, omitir un punto en la razón social).
 - El extractor de OpenAI está implementado y probado con mocks, pero **no se probó contra la API real**.
 - Las tablas se crean con `create_all` al arrancar; en un proyecto más grande usaría migraciones (Alembic).
-- Sin autenticación: es una API de demostración local.
+- Sin autenticación: es una aplicación de demostración local.
+- El frontend tiene tests unitarios de componentes y del servicio, pero no tests end-to-end.
 
 ## Stack
 
-Python 3.13 · FastAPI · Pydantic v2 · SQLAlchemy 2.0 · PostgreSQL 16 · pdfplumber · Ollama / OpenAI ·
-pytest · Docker Compose · GitHub Actions
+**Backend:** Python 3.13 · FastAPI · Pydantic v2 · SQLAlchemy 2.0 · PostgreSQL 16 · pdfplumber ·
+Ollama / OpenAI · pytest
+
+**Frontend:** Angular 20 · TypeScript · RxJS · signals · formularios reactivos · Karma/Jasmine
+
+**Infraestructura:** Docker Compose · GitHub Actions

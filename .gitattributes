@@ -3,3 +3,4 @@
 
 # Los PDF son binarios: nunca tocar sus bytes
 *.pdf binary
+*.png binary

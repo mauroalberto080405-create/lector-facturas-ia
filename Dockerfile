@@ -18,4 +18,6 @@ RUN useradd --create-home appuser
 USER appuser
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# La nube suele indicar el puerto en la variable PORT; en local se usa 8000.
+# "exec" hace que uvicorn reciba directamente la señal de apagado.
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

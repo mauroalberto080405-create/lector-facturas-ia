@@ -7,11 +7,17 @@ from app.schemas import FacturaExtraida
 
 
 class OpenAIExtractor:
-    """Usa la API de OpenAI (de pago; la API key se lee del .env)."""
+    """Usa la API de OpenAI o una compatible (Groq, etc.) si se indica `base_url`."""
 
-    def __init__(self, api_key: str, modelo: str, cliente: OpenAI | None = None):
+    def __init__(
+        self,
+        api_key: str,
+        modelo: str,
+        base_url: str | None = None,
+        cliente: OpenAI | None = None,
+    ):
         self.modelo = modelo
-        self.cliente = cliente or OpenAI(api_key=api_key)
+        self.cliente = cliente or OpenAI(api_key=api_key, base_url=base_url)
 
     def extraer(self, texto: str) -> FacturaExtraida:
         esquema = json.dumps(FacturaExtraida.model_json_schema(), ensure_ascii=False)
@@ -27,5 +33,5 @@ class OpenAIExtractor:
             )
             contenido = respuesta.choices[0].message.content or ""
         except OpenAIError as error:
-            raise ErrorExtraccion(f"No se pudo consultar OpenAI: {error}") from error
+            raise ErrorExtraccion(f"No se pudo consultar la IA ({self.modelo}): {error}") from error
         return a_factura(contenido)

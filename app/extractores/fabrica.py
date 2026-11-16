@@ -11,7 +11,7 @@ def crear_extractor(config: Config) -> ExtractorIA:
     if config.ia_proveedor == "openai":
         if not config.openai_api_key:
             raise ValueError("IA_PROVEEDOR=openai requiere OPENAI_API_KEY en el archivo .env")
-        return OpenAIExtractor(config.openai_api_key, config.openai_modelo)
+        return OpenAIExtractor(config.openai_api_key, config.openai_modelo, config.openai_base_url)
     return OllamaExtractor(config.ollama_url, config.ollama_modelo)
 
 

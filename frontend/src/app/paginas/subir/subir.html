@@ -1,0 +1,39 @@
+<h2>Subir factura</h2>
+<p class="ayuda">
+  Sube el PDF de una factura electrónica. La IA extrae sus datos, se validan las reglas SUNAT
+  (RUC, IGV, totales) y se guarda. Usa solo facturas ficticias.
+</p>
+
+<label
+  class="zona"
+  [class.encima]="arrastrando()"
+  (dragover)="arrastrar($event, true)"
+  (dragleave)="arrastrar($event, false)"
+  (drop)="soltar($event)"
+>
+  <input type="file" accept="application/pdf,.pdf" (change)="elegir($event)" [disabled]="procesando()" />
+  @if (archivo(); as a) {
+    <strong>{{ a.name }}</strong>
+    <span>{{ (a.size / 1024).toFixed(1) }} KB · haz clic para cambiarlo</span>
+  } @else {
+    <strong>Arrastra un PDF aquí</strong>
+    <span>o haz clic para elegirlo</span>
+  }
+</label>
+
+<button type="button" (click)="procesar()" [disabled]="!archivo() || procesando()">
+  {{ procesando() ? 'Procesando…' : 'Procesar factura' }}
+</button>
+
+@if (procesando()) {
+  <p class="ayuda" role="status">La IA está leyendo la factura. Puede tardar unos segundos.</p>
+}
+
+@if (error(); as mensaje) {
+  <p class="error" role="alert">{{ mensaje }}</p>
+}
+
+@if (resultado(); as factura) {
+  <p class="exito" role="status">Factura guardada con id {{ factura.id }}.</p>
+  <app-factura-detalle [factura]="factura" />
+}

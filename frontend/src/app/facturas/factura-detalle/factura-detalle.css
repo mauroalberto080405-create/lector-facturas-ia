@@ -1,0 +1,36 @@
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+h2 { margin: 0; font-size: 1.15rem; }
+.suave { margin: 0.25rem 0 0; color: var(--texto-suave); font-size: 0.9rem; }
+
+.insignia {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.insignia.valida { background: var(--ok-fondo); color: var(--ok); }
+.insignia.observada { background: var(--error-fondo); color: var(--error); }
+
+.alerta {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--error-fondo);
+  color: var(--error);
+}
+.alerta ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+
+table { width: 100%; margin-top: 1rem; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 0.5rem; border-bottom: 1px solid var(--borde); text-align: left; }
+th { color: var(--texto-suave); font-weight: 600; }
+.num { text-align: right; white-space: nowrap; }
+tfoot td { border-bottom: none; }
+tfoot td:first-child { text-align: right; color: var(--texto-suave); }
+tfoot .total td { font-weight: 700; font-size: 1rem; color: var(--texto); }

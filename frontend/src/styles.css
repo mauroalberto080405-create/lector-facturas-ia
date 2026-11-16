@@ -1,0 +1,22 @@
+/* Colores en variables: un solo lugar para cambiar el tema. */
+:root {
+  --fondo: #f6f7f9;
+  --superficie: #ffffff;
+  --borde: #e2e5ea;
+  --texto: #1d2330;
+  --texto-suave: #5b6475;
+  --acento: #2257d6;
+  --acento-fondo: #e8eefc;
+  --ok: #1a7f4b;
+  --ok-fondo: #e3f5ec;
+  --error: #b42318;
+  --error-fondo: #fdecea;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+}

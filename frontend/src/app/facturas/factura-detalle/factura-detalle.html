@@ -1,0 +1,51 @@
+@let f = factura();
+@let s = simbolo(f.moneda);
+
+<article class="tarjeta">
+  <header>
+    <div>
+      <h2>{{ f.serie_numero }}</h2>
+      <p class="suave">{{ f.razon_social }} · RUC {{ f.ruc_emisor }} · {{ f.fecha_emision }}</p>
+    </div>
+    <span class="insignia" [class.valida]="f.estado === 'VALIDA'" [class.observada]="f.estado === 'OBSERVADA'">
+      {{ f.estado }}
+    </span>
+  </header>
+
+  @if (f.errores.length) {
+    <div class="alerta">
+      <strong>Observaciones de validación SUNAT</strong>
+      <ul>
+        @for (error of f.errores; track $index) {
+          <li>{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <table>
+    <thead>
+      <tr>
+        <th>Descripción</th>
+        <th class="num">Cantidad</th>
+        <th class="num">P. unitario</th>
+        <th class="num">Importe</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of f.items; track item.id) {
+        <tr>
+          <td>{{ item.descripcion }}</td>
+          <td class="num">{{ item.cantidad | number: '1.0-2' }}</td>
+          <td class="num">{{ s }} {{ item.precio_unitario | number: '1.2-2' }}</td>
+          <td class="num">{{ s }} {{ +item.cantidad * +item.precio_unitario | number: '1.2-2' }}</td>
+        </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3">Subtotal</td><td class="num">{{ s }} {{ f.subtotal | number: '1.2-2' }}</td></tr>
+      <tr><td colspan="3">IGV</td><td class="num">{{ s }} {{ f.igv | number: '1.2-2' }}</td></tr>
+      <tr class="total"><td colspan="3">Total</td><td class="num">{{ s }} {{ f.total | number: '1.2-2' }}</td></tr>
+    </tfoot>
+  </table>
+</article>

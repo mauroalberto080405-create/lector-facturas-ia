@@ -1,0 +1,24 @@
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+  padding: 1rem 1.5rem;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+h1 { margin: 0; font-size: 1.2rem; }
+h1 span { color: var(--acento); }
+nav { display: flex; gap: 0.5rem; flex: 1; }
+nav a {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  color: var(--texto-suave);
+  text-decoration: none;
+}
+nav a.activo { background: var(--acento-fondo); color: var(--acento); font-weight: 600; }
+.estado { font-size: 0.85rem; color: var(--texto-suave); }
+.estado::before { content: '● '; }
+.estado.ok { color: var(--ok); }
+.estado.error { color: var(--error); }
+main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }

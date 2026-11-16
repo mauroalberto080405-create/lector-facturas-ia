@@ -1,0 +1,82 @@
+<h2>Resumen</h2>
+<p class="suave">Solo facturas VÁLIDAS. Soles y dólares se muestran por separado.</p>
+
+@if (cargando()) {
+  <p class="suave" role="status">Cargando…</p>
+} @else if (error(); as mensaje) {
+  <p class="error" role="alert">{{ mensaje }}</p>
+} @else if (!totales().length) {
+  <p class="vacio">Aún no hay facturas válidas. Sube una desde “Subir PDF”.</p>
+} @else {
+  <section class="tarjetas">
+    @for (t of totales(); track t.moneda) {
+      <article class="tarjeta">
+        <span class="etiqueta">Total {{ t.moneda }}</span>
+        <strong>{{ simbolo(t.moneda) }} {{ t.total | number: '1.2-2' }}</strong>
+        <span class="suave">{{ t.cantidad }} factura(s) · IGV {{ simbolo(t.moneda) }} {{ t.igv | number: '1.2-2' }}</span>
+      </article>
+    }
+  </section>
+
+  <section class="bloque">
+    <h3>Por mes</h3>
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th>Moneda</th>
+            <th class="num">Facturas</th>
+            <th class="num">IGV</th>
+            <th class="num">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of datos()!.por_mes; track m.mes + m.moneda) {
+            <tr>
+              <td>{{ m.mes }}</td>
+              <td>{{ m.moneda }}</td>
+              <td class="num">{{ m.cantidad }}</td>
+              <td class="num">{{ simbolo(m.moneda) }} {{ m.igv | number: '1.2-2' }}</td>
+              <td class="num">{{ simbolo(m.moneda) }} {{ m.total | number: '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <h3>Por proveedor</h3>
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Proveedor</th>
+            <th class="num">Facturas</th>
+            <th class="barra-col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of datos()!.por_proveedor; track p.ruc_emisor + p.moneda) {
+            <tr>
+              <td>
+                {{ p.razon_social }}
+                <span class="suave ruc">{{ p.ruc_emisor }}</span>
+              </td>
+              <td class="num">{{ p.cantidad }}</td>
+              <td class="barra-col">
+                <div class="fila-barra">
+                  <div class="barra">
+                    <span [style.width.%]="porcentaje(p.total, p.moneda)"></span>
+                  </div>
+                  <span class="num-barra">{{ simbolo(p.moneda) }} {{ p.total | number: '1.2-2' }}</span>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}

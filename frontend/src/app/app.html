@@ -1,0 +1,19 @@
+<header class="barra">
+  <h1>Lector de facturas <span>con IA</span></h1>
+
+  <nav>
+    <a routerLink="/subir" routerLinkActive="activo">Subir PDF</a>
+    <a routerLink="/facturas" routerLinkActive="activo">Facturas</a>
+    <a routerLink="/resumen" routerLinkActive="activo">Resumen</a>
+  </nav>
+
+  @switch (apiConectada()) {
+    @case (true) { <span class="estado ok">API conectada</span> }
+    @case (false) { <span class="estado error">API sin conexión</span> }
+    @default { <span class="estado">Conectando…</span> }
+  }
+</header>
+
+<main>
+  <router-outlet />
+</main>
